@@ -1,5 +1,5 @@
 <template>
-<a-row>
+  <a-row>
     <a-col class="col-1" span="3">
       <a-avatar src="https://picsum.photos/200" shape="rounded" size="default" />
     </a-col>
