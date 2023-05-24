@@ -1,5 +1,5 @@
 <template>
-    <h2 style="margin-top: 10px">Wybierz grupę</h2>
+    <a-typography-title :level="2" :style="{marginTop: '10px'}">Wybierz grupę</a-typography-title>
     <a-space>
       <a-select
         ref="select"
