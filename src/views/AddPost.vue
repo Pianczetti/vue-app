@@ -63,7 +63,7 @@ import Select from '../components/Select/Select.vue'
 import CitySelect from '../components/CitySelect/CitySelect.vue'
 import KudosList from '../components/KudosList/KudosList.vue'
 import dayjs from 'dayjs'
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 let date = dayjs().format()
 
@@ -112,6 +112,9 @@ export default {
     visible: {
       type: Boolean,
       required: true,
+    },
+    activePerson: {
+      type: Object
     }
   },
 
@@ -168,10 +171,10 @@ export default {
     let newPost = {
       postId: getRandomIntInclusive(7,99),
       author: {
-        authorId: 1,
-        avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-        imie: 'Flet',
-        nazwisko: 'Flet'
+        authorId: this.activePerson.id,
+        avatar: this.activePerson.img,
+        imie: this.activePerson.value,
+        nazwisko: this.activePerson.value
       },
       date: date,
       postDescription: this.text,

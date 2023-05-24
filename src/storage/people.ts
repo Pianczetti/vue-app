@@ -3,13 +3,13 @@ const people = [
         id: 1,
         value: 'Paweł Jonas',
         img: 'https://randomuser.me/api/portraits/men/31.jpg',
-        isActive: true,
+        isActive: false,
     },
     {
         id: 2,
         value: 'Kuba',
         img: 'https://randomuser.me/api/portraits/men/1.jpg',
-        isActive: false,
+        isActive: true,
     },
     {
         id: 3,

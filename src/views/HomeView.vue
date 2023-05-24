@@ -5,47 +5,29 @@
         <Person />
       </a-button> -->
       <!-- <Modal /> -->
-      <button class="dp-flex w-100" @click="showModal">
-        <Person />
+      <button class="btn dp-flex w-100" @click="showModal">
+        <Person :person="activePerson"/>
       </button>
-      <AddPost :visible="isModalVisible" @close="hideModal" @new-post="addPost"/>
+      <AddPost :activePerson ="activePerson" :visible="isModalVisible" @close="hideModal" @new-post="addPost"/>
     </div>
-
     <PostList :posts="[...posty]"/>
-  <!-- <AddPostButton /> -->
-     <!-- <PostComponent /> -->
 </div>
   
 </template>
 
 <script>
-// musisz stworzyc formularz, 
-// 1.mantionable
-// 2. a-select multiple autocomplete który przyujmuje jako props, tablice peopleStorage 
-// 3. kudosy czyli v-for dla elmentu kudos, który zawiera element v-for=(item in items) :key='item.id > image - src='item.src', <opis> {{ item.kudos text}} </opis> <name> {{ name }} </name
-// 4. a-select  który przyjmuje groups - z ikonką
-// 5. to wsztstko przypisywane do initialVales posta
-// i konkatenacja tablic czyli posts = [...postsstorage, newPost]
-// stworzyc post na wzor kudosa
-// dorobic sekcje komentarzy z dropdownem który i hoverem na pozycje
-//////////////// ostylować wszystko 
-//// ssać pałe Michałowi do konca zycia
-////////////// PAMIETAJ O COMMITACH 
-
  
 // vendor
 import { ref } from 'vue'
 import { Mentionable } from 'vue-mention'
-
+import { kudoses } from '../storage/kudoses.ts'
+import { posts } from '../storage/posts.ts'
+import { people } from '../storage/people'
 //
 import Person from '../components/Person/Person.vue'
 import AddPost from './AddPost.vue'
 import PostComponent from '../components/Post/Post.vue';
 import PostList from '../components/PostsList/PostList.vue';
-import { kudoses } from '../storage/kudoses.ts'
-import { posts } from '../storage/posts.ts'
-import { people as peopleStorage } from '../storage/people';
-import { groups } from '../storage/groups.ts'
 import Agreement from '../components/Icon/Agreement.vue';
 
 const posty = [...posts]
@@ -62,7 +44,9 @@ export default {
     return {
       isModalVisible: false,
       posty: posty,
-      kudoses: kudoses
+      kudoses: kudoses,
+      people : people,
+      activePerson: null
     }
   },
   methods: {
@@ -77,7 +61,9 @@ export default {
       console.log(posty)
     }
   },
- 
+  created() {
+      this.activePerson = people.find(person => person.isActive)
+      }
 };
 
 </script>
@@ -115,6 +101,12 @@ li {
 
 .w-100{
   width: 100%;
+}
+
+.btn {
+  background: white;
+  border: 1px solid #EEEEEE;
+  border-radius: 6px;
 }
 
 </style>

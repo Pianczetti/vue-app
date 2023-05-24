@@ -22,7 +22,6 @@
       }, {
         value: 'bialystok',
         label: 'Białystok',
-        disabled: true,
       }, {
         value: 'gdansk',
         label: 'Gdańsk',

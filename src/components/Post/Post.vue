@@ -18,21 +18,22 @@
         <Agreement />
       </a-col>
     </a-row>
-
-    <a-typography level="4" >
+    <a-typography-text>
       {{description}}
-    </a-typography>
-
-    <a-typography>
+    </a-typography-text>
+    <a-card :style="{ marginTop:'24px', padding:'35px 55px 58px 5px',}">
       <a-image
       :preview=false
-        :width="200"
+        :width="150"
         :src="kudosImg"
       />
-      {{ kudosTarget }}
-      {{ kudosTitle }}
-    </a-typography>
-</div>
+      <a-space direction="vertical">
+      <a-typography-text >{{ kudosTarget }}</a-typography-text>
+      <a-typography-title :level="2" :style="{fontSize: '24px'}">{{ kudosTitle }}</a-typography-title>
+      </a-space>
+    </a-card>
+
+  </div>
  
 </div>
 
@@ -81,6 +82,7 @@ export default defineComponent({
 </script>
 
 <style  scoped>
+
 .post {
   display: -webkit-box;
   display: -webkit-flex;
@@ -102,6 +104,12 @@ export default defineComponent({
 .col-3 {
   margin-left: auto
 }
+
+.mt-24 { margin-top: 24px}
+.pl-5 { padding-left: 5px}
+.pt-35 {padding-top: 35px;}
+.pb-58 {padding-bottom: 58px}
+.pr-55 { padding-right: 55px}
 
 
 </style>

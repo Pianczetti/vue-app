@@ -2,7 +2,7 @@
     <a-typography :style="headingStyles" v-bind="$attrs" v-on="$listeners">
       <slot></slot>
     </a-typography>
-  </template>
+</template>
   
   <script>
   import { Typography as ATypography } from 'ant-design-vue';
