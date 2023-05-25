@@ -1,88 +1,85 @@
 <template>
   <!-- <Avatar /> -->
-<div class="modal" v-if="visible">
-  <div class="modal-content">
-  <button class="close-button" @click="closeModal">X</button>
+  <div class="modal" v-if="visible">
+    <div class="modal-content">
+      <button class="close-button" @click="closeModal">X</button>
 
-  <a-form class="custom-form" @submit="publish">
-    <Mentionable
-      placement="bottom"
-      :keys="['@', '#']"
-      :items="items"
-      offset="6" 
-      insert-space
-      @open="onOpen"
-      @select="onSelect"
-    >
-    <textarea
-      v-model="text" 
-      placeholder ="Napisz wiadomość"
-      @input="updateCharacterCount"
-      :maxlength="500"/>
+      <a-form class="custom-form" @submit="publish">
+        <Mentionable
+          placement="bottom"
+          :keys="['@', '#']"
+          :items="items"
+          offset="6"
+          insert-space
+          @open="onOpen"
+          @select="onSelect"
+        >
+          <textarea
+            v-model="text"
+            placeholder="Napisz wiadomość"
+            @input="updateCharacterCount"
+            :maxlength="500"
+          />
 
-    <template #no-result>
-      <div class="dim">
-        Użytkownik nie istnieje
-      </div>
-    </template>
+          <template #no-result>
+            <div class="dim">Użytkownik nie istnieje</div>
+          </template>
 
-    <template #item-@="{ item }">
-      <div class="user">
-        <span class="dim">
-          ({{ item.value }})
-        </span>
-      </div>
-    </template>
+          <template #item-@="{ item }">
+            <div class="user">
+              <span class="dim"> ({{ item.value }}) </span>
+            </div>
+          </template>
+        </Mentionable>
 
-  </Mentionable>
+        <div class="character-counter">{{ characterCount }}/500</div>
+        <div class="select-container">
+          <p style="text-align: left">Wybierz osobę której przyznajesz Kudos</p>
+          <Select v-model="selectedPerson.value" />
+        </div>
 
-  <div class="character-counter">{{ characterCount }}/500</div>
-  <div class="select-container">
-    <p style="text-align: left">Wybierz osobę której przyznajesz Kudos</p>
-    <Select v-model="selectedPerson.value" />
+        <div class="kudoses-container">
+          <p style="text-align: left">Wybierz kudos</p>
+          <KudosList v-model="selectedKudos" />
+        </div>
+
+        <div class="city-container">
+          <CitySelect v-model="selectedCity.value" />
+          <button type="submit">Opublikuj</button>
+        </div>
+      </a-form>
+    </div>
   </div>
-
-  <div class="kudoses-container">
-    <p style="text-align: left">Wybierz kudos</p>
-    <KudosList v-model="selectedKudos"/>
-  </div>
-
-  <div class="city-container">
-    <CitySelect v-model="city"/>
-    <button type="submit">Opublikuj</button>
-  </div>
-</a-form>
-</div>
-</div>
 </template>
 
 <script>
-import { people } from '../storage/people.ts'
-import { Mentionable } from 'vue-mention'
-import Select from '../components/Select/Select.vue'
-import CitySelect from '../components/CitySelect/CitySelect.vue'
-import KudosList from '../components/KudosList/KudosList.vue'
-import dayjs from 'dayjs'
-import { ref } from 'vue';
+import { people } from "../storage/people.ts";
+import { Mentionable } from "vue-mention";
+import { groups } from "../storage/groups.ts";
+import Select from "../components/Select/Select.vue";
+import CitySelect from "../components/CitySelect/CitySelect.vue";
+import KudosList from "../components/KudosList/KudosList.vue";
+import dayjs from "dayjs";
+import { ref } from "vue";
 
-let date = dayjs().format()
+let date = dayjs().format();
 
 const issues = [
   {
     value: 123,
-    label: 'Error with foo bar',
-    searchText: 'foo bar'
+    label: "Error with foo bar",
+    searchText: "foo bar",
   },
   {
     value: 42,
-    label: 'Cannot read line',
-    searchText: 'foo bar line'
+    label: "Cannot read line",
+    searchText: "foo bar line",
   },
   {
     value: 77,
-    label: 'I have a feature suggestion',
-    searchText: 'feature'
-  }
+    label: "I have a feature suggestion",
+    searchText: "feature",
+  },
 ];
 
 const defaultValues = {
@@ -100,12 +97,10 @@ const defaultValues = {
 };
 
 const getRandomIntInclusive = (min, max) => {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 export default {
   props: {
@@ -114,45 +109,56 @@ export default {
       required: true,
     },
     activePerson: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
-  setup(){
+  setup() {
     const selectedPerson = ref([]);
- 
+    const selectedCity = ref([]);
     return {
-      selectedPerson
+      selectedPerson,
+      selectedCity,
     };
   },
 
-  components :{
+  components: {
     Mentionable,
     Select,
     KudosList,
-    CitySelect
-},
-  data(){
+    CitySelect,
+  },
+  data() {
     return {
-      text: '',
+      text: "",
       items: [],
       characterCount: 0,
-      person: '',
-      kudos: '',
-      city: ''
-    }
+      person: "",
+      kudos: "",
+      city: 0,
+    };
   },
 
   computed: {
-  selectedPersonId() {
-    if (this.selectedPerson) {
-      const selectedName = this.selectedPerson.value[0]
-      const matchedPerson = people.find(person => person.value === selectedName);
-      return matchedPerson ? matchedPerson.id : null
-    }
-    return null;
+    selectedPersonId() {
+      if (this.selectedPerson) {
+        const selectedName = this.selectedPerson.value[0];
+        const matchedPerson = people.find(
+          person => person.value === selectedName
+        );
+        return matchedPerson ? matchedPerson.id : null;
+      }
+      return null;
+    },
+    selectedCityId() {
+      if (this.selectedCity) {
+        console.log(this.selectedCity);
+        const citySelectVal = this.selectedCity.value;
+        const matchedCity = groups.find(group => group.value === citySelectVal);
+        return matchedCity ? matchedCity.value : null;
+      }
+    },
   },
-},
 
   methods: {
     onOpen(key) {
@@ -161,48 +167,47 @@ export default {
     onSelect(item) {
       this.text = this.text.replace(/@\S+/, `@${item.label} `);
     },
-    closeModal(){
-      this.$emit('close');
+    closeModal() {
+      this.$emit("close");
     },
     updateCharacterCount() {
-    this.characterCount = this.text.length;
-  },
-  publish() {
-    let newPost = {
-      postId: getRandomIntInclusive(7,99),
-      author: {
-        authorId: this.activePerson.id,
-        avatar: this.activePerson.img,
-        imie: this.activePerson.value,
-        nazwisko: this.activePerson.value
-      },
-      date: date,
-      postDescription: this.text,
-      likes: getRandomIntInclusive(7,99),
-      kudos: {
-        kudosId: 1,
-        targetPersonId: this.selectedPersonId,
-      },
-      groupId: getRandomIntInclusive(1,4),
-    }
+      this.characterCount = this.text.length;
+    },
+    publish() {
+      let newPost = {
+        postId: getRandomIntInclusive(7, 99),
+        author: {
+          authorId: this.activePerson.id,
+          avatar: this.activePerson.img,
+          imie: this.activePerson.value,
+          nazwisko: this.activePerson.value,
+        },
+        date: date,
+        postDescription: this.text,
+        likes: getRandomIntInclusive(7, 99),
+        kudos: {
+          kudosId: 1,
+          targetPersonId: this.selectedPersonId,
+        },
+        groupId: this.selectedCityId,
+      };
       // Emit the dataObject to the parent component
-      this.$emit('new-post', newPost);
+      this.$emit("new-post", newPost);
 
       // Reset the form
-      this.text = '';
+      this.text = "";
       this.characterCount = 0;
-      this.selectedPerson = '';
-      this.kudos = '';
-      this.city = '';
-      this.$emit('close');
+      this.selectedPerson = "";
+      this.kudos = "";
+      this.city = "";
+      this.$emit("close");
+    },
   },
-  }
-
-}
+};
 </script>
 
 <style lang="scss">
-.select-container{
+.select-container {
   display: flex;
   flex-direction: column;
 }
@@ -212,7 +217,9 @@ export default {
   gap: 20px;
 }
 
-textarea { width: 100%;}
+textarea {
+  width: 100%;
+}
 
 .modal {
   position: fixed;
