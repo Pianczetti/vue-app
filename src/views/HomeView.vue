@@ -6,31 +6,34 @@
       </a-button> -->
       <!-- <Modal /> -->
       <button class="btn dp-flex w-100" @click="showModal">
-        <Person :person="activePerson"/>
+        <Person :person="activePerson" />
       </button>
-      <AddPost :activePerson ="activePerson" :visible="isModalVisible" @close="hideModal" @new-post="addPost"/>
+      <AddPost
+        :activePerson="activePerson"
+        :visible="isModalVisible"
+        @close="hideModal"
+        @new-post="addPost"
+      />
     </div>
-    <PostList :posts="[...posty]"/>
-</div>
-  
+    <PostList :posts="[...posty]" :person="activePerson" />
+  </div>
 </template>
 
 <script>
- 
 // vendor
-import { ref } from 'vue'
-import { Mentionable } from 'vue-mention'
-import { kudoses } from '../storage/kudoses.ts'
-import { posts } from '../storage/posts.ts'
-import { people } from '../storage/people'
+import { ref } from "vue";
+import { Mentionable } from "vue-mention";
+import { kudoses } from "../storage/kudoses.ts";
+import { posts } from "../storage/posts.ts";
+import { people } from "../storage/people";
 //
-import Person from '../components/Person/Person.vue'
-import AddPost from './AddPost.vue'
-import PostComponent from '../components/Post/Post.vue';
-import PostList from '../components/PostsList/PostList.vue';
-import Agreement from '../components/Icon/Agreement.vue';
+import Person from "../components/Person/Person.vue";
+import AddPost from "./AddPost.vue";
+import PostComponent from "../components/Post/Post.vue";
+import PostList from "../components/PostsList/PostList.vue";
+import Agreement from "../components/Icon/Agreement.vue";
 
-const posty = [...posts]
+const posty = [...posts];
 
 export default {
   components: {
@@ -39,39 +42,37 @@ export default {
     Agreement,
     Person,
     PostList,
-},
+  },
   data() {
     return {
       isModalVisible: false,
       posty: posty,
       kudoses: kudoses,
-      people : people,
-      activePerson: null
-    }
+      people: people,
+      activePerson: null,
+    };
   },
   methods: {
     showModal() {
       this.isModalVisible = true;
     },
-    hideModal(){
+    hideModal() {
       this.isModalVisible = false;
     },
-    addPost(dataObject){
-      posty.unshift(dataObject)
-      console.log(posty)
-    }
+    addPost(dataObject) {
+      posty.unshift(dataObject);
+      console.log(posty);
+    },
   },
   created() {
-      this.activePerson = people.find(person => person.isActive)
-      }
+    this.activePerson = people.find(person => person.isActive);
+  },
 };
-
 </script>
-
 
 <style lang="scss" scoped>
 body {
-  max-width: 650px
+  max-width: 650px;
 }
 
 ul {
@@ -87,7 +88,7 @@ li {
 
 .mentionable {
   width: 100%;
-  padding: 10px
+  padding: 10px;
 }
 
 .mention-item {
@@ -99,14 +100,13 @@ li {
   background: rgb(192, 250, 153);
 }
 
-.w-100{
+.w-100 {
   width: 100%;
 }
 
 .btn {
   background: white;
-  border: 1px solid #EEEEEE;
+  border: 1px solid #eeeeee;
   border-radius: 6px;
 }
-
 </style>
