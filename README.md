@@ -19,10 +19,10 @@ To run this project locally, follow the steps below:
 
 1. Clone this repository to your local machine using the following command:
 
-   ```shell
-   git clone <repository-url>
+```shell
+git clone <repository-url>
 
-   ```
+```
 
 2. Navigate to the project's root directory:
 
@@ -50,14 +50,14 @@ yarn install
 
 ```shell
 
-    npm run dev
+npm run dev
 ```
 
-    This command will build and start the project in development mode. The server will automatically reload the changes you make to the source files.
+This command will build and start the project in development mode. The server will automatically reload the changes you make to the source files.
 
-    Open your browser and visit http://localhost:3000 to see the running application.
+Open your browser and visit http://localhost:3000 to see the running application.
 
-Building for Production
+## Building for Production
 
 5. To build the project for production, use the following command:
 
