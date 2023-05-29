@@ -68,7 +68,3 @@ npm run build
 
 This command will create an optimized production build of your application. The build artifacts will be stored in the dist directory.
 Additional Scripts
-
-6. This project uses mentionable from https://github.com/Akryum/vue-mention
-
-7. https://antdv.com/components/overview
