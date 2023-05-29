@@ -27,23 +27,23 @@ import {
   PaperClipOutlined,
   SmileOutlined,
 } from "@ant-design/icons-vue";
+import { usePeople } from "../../composables/usePeople";
+
 export default {
-  props: {
-    activePerson: {
-      type: Object,
-    },
-  },
   components: {
     FileGifOutlined,
     PaperClipOutlined,
     SmileOutlined,
   },
-  data() {
+  setup() {
+    const { activePerson } = usePeople();
+
     return {
       avatarShape: "circle",
       comment: "",
       placeholder: "Napisz komentarz...",
       iconMarginLeft: "11px",
+      activePerson,
     };
   },
 };
@@ -55,6 +55,7 @@ export default {
   align-items: center;
   padding: 26px 20px;
   position: relative;
+  background: #fff;
 }
 
 .comment .ant-avatar {
