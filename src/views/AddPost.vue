@@ -1,207 +1,238 @@
 <template>
-  <!-- <Avatar /> -->
-  <div class="modal" v-if="visible">
-    <div class="modal-content">
-      <button class="close-button" @click="closeModal">X</button>
+  <a-form class="custom-form" @submit="publish">
+    <Mentionable
+      placement="bottom"
+      :keys="['@', '#']"
+      :items="mentionableItems"
+      offset="6"
+      insert-space
+      @open="onOpen"
+      @select="onSelect"
+    >
+      <a-textarea
+        v-model:value="formData.text"
+        placeholder="Napisz wiadomość"
+        :autoSize="{ minRows: 2, maxRows: 3 }"
+        @input="updateCharacterCount"
+        :maxlength="500"
+      ></a-textarea>
 
-      <a-form class="custom-form" @submit="publish">
-        <Mentionable
-          placement="bottom"
-          :keys="['@', '#']"
-          :items="items"
-          offset="6"
-          insert-space
-          @open="onOpen"
-          @select="onSelect"
-        >
-          <textarea
-            v-model="text"
-            placeholder="Napisz wiadomość"
-            @input="updateCharacterCount"
-            :maxlength="500"
-          />
+      <template #no-result>
+        <div class="dim">Użytkownik nie istnieje</div>
+      </template>
 
-          <template #no-result>
-            <div class="dim">Użytkownik nie istnieje</div>
-          </template>
-
-          <template #item-@="{ item }">
-            <div class="user">
-              <span class="dim"> ({{ item.value }}) </span>
-            </div>
-          </template>
-        </Mentionable>
-
-        <div class="character-counter">{{ characterCount }}/500</div>
-        <div class="select-container">
-          <p style="text-align: left">Wybierz osobę której przyznajesz Kudos</p>
-          <Select v-model="selectedPerson.value" />
+      <template #item-@="{ item }">
+        <div class="user">
+          <span class="dim"> ({{ item.value }}) </span>
         </div>
+      </template>
+    </Mentionable>
 
-        <div class="kudoses-container">
-          <p style="text-align: left">Wybierz kudos</p>
-          <KudosList v-model="selectedKudos" />
-        </div>
-
-        <div class="city-container">
-          <CitySelect v-model="selectedCity.value" />
-          <button type="submit">Opublikuj</button>
-        </div>
-      </a-form>
+    <div class="character-counter">{{ formData.characterCount }}/500</div>
+    <div class="select-container">
+      <p style="text-align: left">Wybierz osobę której przyznajesz Kudos</p>
+      <a-select
+        mode="tags"
+        :token-separators="[',']"
+        placeholder="Wybierz osobę..."
+        v-model:value="formData.value1"
+        :options="options1"
+      >
+      </a-select>
     </div>
-  </div>
+
+    <div class="kudoses-container">
+      <p style="text-align: left">Wybierz kudos</p>
+      <Kudos
+        v-for="kudo in kudosy"
+        :key="kudo.id"
+        :id="kudo.id"
+        :title="kudo.title"
+        :description="kudo.description"
+        :img="kudo.img"
+        :selectedKudos="formData.selectedKudos"
+        @update:selectedKudos="updateSelectedKudos"
+      />
+    </div>
+    <div class="city-container">
+      <a-select
+        v-model:value="formData.value2"
+        style="width: 120px"
+        @change="handleChange"
+      >
+        <a-select-option
+          v-for="group in options2"
+          :key="group.id"
+          :value="group.value"
+        >
+          <img
+            :src="group.img"
+            alt="City Icon"
+            style="width: 16px; height: 16px; margin-right: 8px"
+          />
+          {{ group.label }}
+        </a-select-option>
+      </a-select>
+      <button type="submit">Opublikuj</button>
+    </div>
+  </a-form>
 </template>
 
 <script>
+import { kudoses } from "../storage/kudoses";
 import { people } from "../storage/people.ts";
 import { Mentionable } from "vue-mention";
 import { groups } from "../storage/groups.ts";
-import Select from "../components/Select/Select.vue";
-import CitySelect from "../components/CitySelect/CitySelect.vue";
-import KudosList from "../components/KudosList/KudosList.vue";
+import Kudos from "../components/Kudos/Kudos.vue";
 import dayjs from "dayjs";
 import { ref } from "vue";
+import { usePeople } from "../composables/usePeople";
 
-let date = dayjs().format();
-
-const issues = [
-  {
-    value: 123,
-    label: "Error with foo bar",
-    searchText: "foo bar",
+const defaultPost = {
+  postId: null,
+  author: {
+    authorId: null,
+    avatar: "",
+    imie: "",
+    nazwisko: "",
   },
-  {
-    value: 42,
-    label: "Cannot read line",
-    searchText: "foo bar line",
-  },
-  {
-    value: 77,
-    label: "I have a feature suggestion",
-    searchText: "feature",
-  },
-];
-
-const defaultValues = {
-  postId: "",
-  authorId: "",
-  avatar: "",
   date: "",
   postDescription: "",
-  likes: 0,
-  kudos: {
-    kudosId: "",
-    personId: "",
-  },
-  groupId: "",
+  likes: null,
+  kudosId: null,
+  targetPersonId: null,
+  groupId: null,
 };
-
-const getRandomIntInclusive = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
 export default {
+  components: {
+    Mentionable,
+    Kudos,
+  },
+
   props: {
     visible: {
       type: Boolean,
       required: true,
     },
-    activePerson: {
-      type: Object,
-    },
   },
 
-  setup() {
-    const selectedPerson = ref([]);
-    const selectedCity = ref([]);
-    return {
-      selectedPerson,
-      selectedCity,
+  setup(_, { emit }) {
+    const currentTime = ref("");
+    const { activePerson } = usePeople();
+    const [firstName, lastName] = activePerson.value.split(" ");
+    const mentionableItems = ref([]);
+    const newPost = ref(defaultPost);
+    const kudosy = ref([...kudoses]);
+    const options1 = ref([...people]);
+    const options2 = ref([...groups]);
+
+    const formData = ref({
+      text: ref(""),
+      value1: ref([]),
+      selectedKudos: ref(0),
+      value2: ref("Wybierz miasto"),
+      characterCount: ref(0),
+    });
+
+    const resetFormData = () => {
+      formData.value.text = "";
+      formData.value.value1 = [];
+      formData.value.selectedKudos = 0;
+      formData.value.value2 = "Wybierz miasto";
+      formData.value.characterCount = 0;
     };
-  },
 
-  components: {
-    Mentionable,
-    Select,
-    KudosList,
-    CitySelect,
-  },
-  data() {
-    return {
-      text: "",
-      items: [],
-      characterCount: 0,
-      person: "",
-      kudos: "",
-      city: 0,
+    const updateSelectedKudos = kudosId => {
+      console.log("kudos-id", kudosId);
+      formData.value.selectedKudos = kudosId;
     };
-  },
 
-  computed: {
-    selectedPersonId() {
-      if (this.selectedPerson) {
-        const selectedName = this.selectedPerson.value[0];
-        const matchedPerson = people.find(
-          person => person.value === selectedName
-        );
-        return matchedPerson ? matchedPerson.id : null;
+    const getRandomIntInclusive = (min, max) => {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    const getCurrentTime = () => {
+      return (currentTime.value = dayjs().format("YYYY-MM-DDTHH:mm:ssZZ"));
+    };
+
+    const handleChange = value => {
+      newPost.value.groupId = value;
+    };
+
+    const handleSelectedKudosUpdate = kudosId => {
+      newPost.value.kudosId = kudosId;
+    };
+
+    const selectedName = name => {
+      const matchingPerson = options1.value.find(
+        person => person.value === name
+      );
+      console.log(matchingPerson.value);
+      if (matchingPerson.value) {
+        newPost.value.targetPersonId = matchingPerson.id;
       }
-      return null;
-    },
-    selectedCityId() {
-      if (this.selectedCity) {
-        console.log(this.selectedCity);
-        const citySelectVal = this.selectedCity.value;
-        const matchedCity = groups.find(group => group.value === citySelectVal);
-        return matchedCity ? matchedCity.value : null;
-      }
-    },
-  },
+    };
 
-  methods: {
-    onOpen(key) {
-      this.items = key === "@" ? people : issues;
-    },
-    onSelect(item) {
-      this.text = this.text.replace(/@\S+/, `@${item.label} `);
-    },
-    closeModal() {
-      this.$emit("close");
-    },
-    updateCharacterCount() {
-      this.characterCount = this.text.length;
-    },
-    publish() {
-      let newPost = {
-        postId: getRandomIntInclusive(7, 99),
-        author: {
-          authorId: this.activePerson.id,
-          avatar: this.activePerson.img,
-          imie: this.activePerson.value,
-          nazwisko: this.activePerson.value,
-        },
-        date: date,
-        postDescription: this.text,
-        likes: getRandomIntInclusive(7, 99),
-        kudos: {
-          kudosId: 1,
-          targetPersonId: this.selectedPersonId,
-        },
-        groupId: this.selectedCityId,
-      };
-      // Emit the dataObject to the parent component
-      this.$emit("new-post", newPost);
+    const resetPost = () => {
+      newPost.value = { ...defaultPost };
+    };
 
-      // Reset the form
-      this.text = "";
-      this.characterCount = 0;
-      this.selectedPerson = "";
-      this.kudos = "";
-      this.city = "";
-      this.$emit("close");
-    },
+    const onOpen = key => {
+      mentionableItems.value = key === "@" ? people : issues;
+    };
+
+    const onSelect = item => {
+      text.value = text.value.replace(/@\S+/, `@${item.label} `);
+    };
+
+    const closeModal = () => {
+      emit("close");
+    };
+
+    const updateCharacterCount = () => {
+      newPost.value.postDescription = formData.value.text;
+      formData.value.characterCount = formData.value.text.length;
+    };
+
+    const publish = () => {
+      selectedName(formData.value.value1[0]);
+      newPost.value.kudosId = formData.value.selectedKudos;
+      newPost.value.author.authorId = activePerson.id;
+      newPost.value.author.imie = firstName;
+      newPost.value.author.nazwisko = lastName;
+      newPost.value.author.avatar = activePerson.img;
+      newPost.value.date = getCurrentTime();
+      newPost.value.postId = getRandomIntInclusive(7, 99);
+      newPost.value.likes = getRandomIntInclusive(7, 99);
+      emit("new-post", newPost.value);
+      resetFormData();
+      resetPost();
+      closeModal();
+    };
+
+    return {
+      formData,
+      kudosy,
+      value1: ref(undefined),
+      value2: ref(undefined),
+      options1,
+      options2,
+      currentTime,
+      mentionableItems,
+      updateSelectedKudos,
+      handleSelectedKudosUpdate,
+      selectedName,
+      onOpen,
+      onSelect,
+      closeModal,
+      updateCharacterCount,
+      publish,
+      handleChange,
+      getCurrentTime,
+      resetFormData,
+    };
   },
 };
 </script>
@@ -210,49 +241,5 @@ export default {
 .select-container {
   display: flex;
   flex-direction: column;
-}
-
-.mentionable {
-  display: flex;
-  gap: 20px;
-}
-
-textarea {
-  width: 100%;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  // background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-}
-
-.modal-content {
-  width: 564px;
-  background-color: #ffffff;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  position: relative;
-  max-height: 800px; /* Adjust the height as needed */
-  overflow-y: auto;
-}
-
-.close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 18px;
-  padding: 5px 10px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 999;
 }
 </style>

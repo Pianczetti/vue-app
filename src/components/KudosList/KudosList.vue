@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <Kudos
     v-for="kudo in kudosiki"
     :key="kudo.id"
@@ -12,26 +12,28 @@
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import Kudos from "../Kudos/Kudos.vue";
 import { kudoses } from "../../storage/kudoses.ts";
-import { ref } from "vue";
-
-const kudosiki = [...kudoses];
 
 export default {
   components: {
     Kudos,
   },
-  data() {
+  setup(_, { emit }) {
+    const selectedKudos = ref(0);
+    const kudosiki = ref([...kudoses]);
+
+    const updateSelectedKudos = kudosId => {
+      selectedKudos.value = kudosId;
+      emit("update:selectedKudos", selectedKudos.value);
+    };
+
     return {
-      selectedKudos: 0,
-      kudosiki: kudosiki,
+      selectedKudos,
+      kudosiki,
+      updateSelectedKudos,
     };
   },
-  methods: {
-    updateSelectedKudos(kudosId) {
-      this.selectedKudos = kudosId;
-    },
-  },
 };
-</script>
+</script> -->

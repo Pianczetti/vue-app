@@ -64,4 +64,20 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+svg {
+  background: #eeeeee;
+  padding: 2px;
+  border-radius: 6px;
+}
+.a,
+.c {
+  fill: #a8996f;
+}
+.a {
+  opacity: 0.59;
+}
+.b {
+  fill: #fff;
+}
+</style>

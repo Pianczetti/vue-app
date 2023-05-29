@@ -2,52 +2,104 @@
   <div>
     <div class="post">
       <a-row>
-        <a-col class="col-1" span="3">
-          <a-avatar :src="author.avatar" shape="rounded" size="default" />
+        <a-col
+          :style="{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }"
+          class="col-1"
+          span="2"
+        >
+          <a-avatar :src="author.avatar" shape="rounded" size="large" />
         </a-col>
-        <a-col class="col-2" span="9">
-          <a-typography level="4">
-            {{ author.imie }} {{ author.nazwisko }}
-          </a-typography>
-          <a-space />
-          <a-typography level="4">
-            {{ date }}
-          </a-typography>
+        <a-col
+          :style="{
+            display: 'flex',
+            alignContent: 'flexStart',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            marginLeft: '5px',
+          }"
+          class="col-2"
+          span="6"
+        >
+          <a-space level="4">
+            <a-typography-text strong>
+              {{ author.imie }} {{ author.nazwisko }}
+            </a-typography-text>
+          </a-space>
+          <a-space level="4">
+            <Date :date="date" />
+          </a-space>
         </a-col>
         <a-col class="col-3" span="3">
           <Agreement />
         </a-col>
       </a-row>
-      <a-typography-text>
+
+      <p :style="{ marginTop: '38px', textAlign: 'left' }">
         {{ description }}
-      </a-typography-text>
-      <a-card :style="{ marginTop: '24px', padding: '35px 55px 58px 5px' }">
-        <a-image :preview="false" :width="150" :src="kudosImg" />
-        <a-space direction="vertical" :style="{ marginLeft: '35px' }">
-          <a-typography-text>{{ kudosTarget }}</a-typography-text>
-          <a-typography-title :level="2" :style="{ fontSize: '24px' }">{{
-            kudosTitle
-          }}</a-typography-title>
-        </a-space>
+      </p>
+
+      <a-card :style="postCardStyle">
+        <img :height="124" :width="100" :src="kudosImg" />
+        <div :style="postCardSpaceStyle">
+          <p :style="{ margin: '0' }">{{ kudosTarget }}</p>
+          <a-typography-title :level="2" :style="postCardTitleStyle">
+            {{ kudosTitle }}
+          </a-typography-title>
+        </div>
       </a-card>
-      <a-typography-text>
-        {{ kudosGroup }}
-      </a-typography-text>
-      <Likes :likes="likes" />
+      <div class="post-info-container">
+        <div class="city-container">
+          <img
+            class="filter-gray"
+            :src="kudosGroupImg"
+            alt="City Icon"
+            style="width: 16px; height: 16px; margin-right: 8px"
+          />
+          <a-typography-text strong>
+            {{ kudosGroup }}
+          </a-typography-text>
+        </div>
+        <div class="likes-container">
+          <Likes :likes="likes" />
+        </div>
+        <a-popover trigger="click">
+          <template #content>
+            <p class="popover-item">Edit</p>
+            <p class="popover-item">Share</p>
+            <p class="popover-item">Other</p>
+          </template>
+          <a-button
+            :style="{ marginLeft: '5px', border: 'unset', padding: '2px' }"
+          >
+            <ThreeDots />
+          </a-button>
+        </a-popover>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, computed, onMounted, watch } from "vue";
+import dayjs, { Dayjs } from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import Agreement from "../Icon/Agreement.vue";
 import Likes from "../Likes/Likes.vue";
-import { Dayjs } from "dayjs";
+import Date from "../Date/Date.vue";
+import ThreeDots from "../../components/ThreeDots/ThreeDots.vue";
 import { kudoses } from "../../storage/kudoses";
 import { groups } from "../../storage/groups";
-import { ref } from "vue";
 import { people } from "../../storage/people";
-// import { posts } from '../../../storage/posts';
+import {
+  getKudosProperty,
+  getKudosGroupProperty,
+} from "../../composables/useKudos.js";
+
+dayjs.extend(relativeTime);
 
 export default defineComponent({
   name: "PostComponent",
@@ -57,49 +109,87 @@ export default defineComponent({
     date: { type: Dayjs },
     description: { type: String },
     likes: { type: Number },
-    kudosProp: { type: Object },
+    kudosId: { type: Number },
+    kudosTarget: { type: Number },
     group: { type: Number },
   },
   components: {
     Agreement,
     Likes,
+    Date,
+    ThreeDots,
   },
 
-  computed: {
-    kudosTitle() {
-      const foundKudos = kudoses.find(
-        kudos => kudos.id === this.kudosProp.kudosId
-      );
-      return foundKudos ? foundKudos.title : "";
-    },
-    kudosImg() {
-      const foundKudos = kudoses.find(
-        kudos => kudos.id === this.kudosProp.kudosId
-      );
-      return foundKudos ? foundKudos.img : "";
-    },
-    kudosTarget() {
+  setup(props) {
+    const kudosy = ref([...kudoses]);
+    const grupy = ref([...groups]);
+
+    const kudosTitle = computed(() => {
+      console.log("kudosTitle computed");
+      return getKudosProperty(kudosy, props, "title");
+    });
+
+    const kudosImg = computed(() => {
+      console.log("kudosImg computed");
+      return getKudosProperty(kudosy, props, "img");
+    });
+
+    const kudosGroup = computed(() => {
+      console.log("kudosGroup computed");
+      return getKudosGroupProperty(grupy, props, "label");
+    });
+
+    const kudosGroupImg = computed(() => {
+      console.log("kudosGroupImg computed");
+      return getKudosGroupProperty(grupy, props, "img");
+    });
+
+    const kudosTarget = computed(() => {
       const foundPerson = people.find(
-        person => person.id === this.kudosProp.kudosId
+        person => person.id === props.kudosTarget
       );
       return foundPerson ? foundPerson.value : "";
-    },
-    kudosGroup() {
-      const foundGroup = groups.find(group => group.value === this.group);
-      return foundGroup ? foundGroup.label : "";
-    },
+    });
+
+    const postCardStyle = computed(() => ({
+      height: "193px",
+      marginTop: "24px",
+      marginBottom: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: "6px",
+    }));
+
+    const postCardSpaceStyle = computed(() => ({
+      marginLeft: "35px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    }));
+
+    const postCardTitleStyle = computed(() => ({
+      fontSize: "24px",
+    }));
+
+    return {
+      postCardStyle,
+      postCardSpaceStyle,
+      postCardTitleStyle,
+      kudosTitle,
+      kudosImg,
+      kudosTarget,
+      kudosGroup,
+      kudosGroupImg,
+    };
   },
 });
 </script>
 
 <style scoped>
 .post {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
   padding: 16px;
   margin: 13px 0 0 0;
@@ -113,23 +203,41 @@ export default defineComponent({
   border-bottom: unset;
 }
 
-.col-3 {
+.city-container {
+  display: flex;
+  align-items: center;
+}
+.city-container span {
+  color: #a8996f;
+}
+.post-info-container {
+  display: flex;
+  align-items: center;
+}
+
+.likes-container {
   margin-left: auto;
 }
 
-.mt-24 {
-  margin-top: 24px;
+.filter-gray {
+  filter: invert(71%) sepia(12%) saturate(909%) hue-rotate(7deg) brightness(84%)
+    contrast(87%);
 }
-.pl-5 {
-  padding-left: 5px;
+.col-3 {
+  margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+  align-items: center;
 }
-.pt-35 {
-  padding-top: 35px;
+
+.popover-item {
+  padding: 5px 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
 }
-.pb-58 {
-  padding-bottom: 58px;
-}
-.pr-55 {
-  padding-right: 55px;
+.popover-item:hover {
+  background: #fbfbfb;
+  cursor: pointer;
 }
 </style>

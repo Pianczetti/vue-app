@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+src/components/Heading/Heading.vue
+.gitignore
+src/views/HomeViewSecond.vue
+src/composables/usePosts.js
+src/composables/useSelect.js
+src/views/AddPostSecond.vue
+src/views/HomeThird.vue
+src/components/KudosList/KudosList.vue
+src/components/Heading/Heading.vue

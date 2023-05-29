@@ -7,16 +7,11 @@
       @change="updateSelectedKudos"
       :name="'selectKudos'"
     ></a-radio>
-    <a-card
-      class="kudos-card"
-      :hoverable="true"
-      :loading="loading"
-      @click="selectKudos"
-    >
+    <a-card class="kudos-card" :hoverable="true">
       <div slot="cover">
         <a-avatar class="kudos-avatar" :src="img"></a-avatar>
       </div>
-      <div>
+      <div class="kudos-description">
         <a-typography
           class="kudos-title"
           :title="title"
@@ -25,7 +20,7 @@
           >{{ title }}</a-typography
         >
         <a-typography
-          class="kudos-description"
+          class="kudos-target-name"
           :title="description"
           :ellipsis="true"
           >{{ description }}</a-typography
@@ -36,14 +31,13 @@
 </template>
 
 <script>
-import { kudoses } from "../../storage/kudoses.ts";
 import {
   Radio as ARadio,
   Card as ACard,
   Avatar as AAvatar,
   Typography as ATypography,
 } from "ant-design-vue";
-import { defineComponent } from "vue";
+import { defineComponent, computed, ref } from "vue";
 
 export default defineComponent({
   components: {
@@ -69,36 +63,31 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
     selectedKudos: {
       type: Number,
       required: true,
       default: 0,
     },
   },
-  computed: {
-    isSelected() {
-      return this.selectedKudos === this.id;
-    },
+  setup(props, { emit }) {
+    const isSelected = computed(() => props.selectedKudos === props.id);
+
+    const updateSelectedKudos = () => {
+      emit("update:selectedKudos", props.id);
+    };
+
+    // const selectKudos = () => {
+    //   if (!isSelected.value) {
+    //     updateSelectedKudos();
+    //   }
+    // };
+
+    return {
+      isSelected,
+      updateSelectedKudos,
+      // selectKudos,
+    };
   },
-  methods: {
-    updateSelectedKudos() {
-      this.$emit("update:selectedKudos", this.id);
-    },
-    selectKudos() {
-      if (!this.isSelected) {
-        this.updateSelectedKudos();
-      }
-    },
-  },
-  // data() {
-  //   return {
-  //     selectedKudos: null,
-  //   };
-  // },
 });
 </script>
 
@@ -128,11 +117,15 @@ export default defineComponent({
   height: 60px;
 }
 
+.kudos-description {
+  margin-left: 40px;
+}
+
 .kudos-title {
   margin-top: 8px;
 }
 
-.kudos-description {
+.kudos-target-name {
   margin-top: 8px;
 }
 

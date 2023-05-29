@@ -34,10 +34,11 @@ a:hover {
 
 body {
   margin: 0;
-  /* display: flex; */
+  height: auto;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: #fbfbfb;
 }
 
 h1 {
@@ -64,7 +65,9 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-li {list-style-type: none;}
+li {
+  list-style-type: none;
+}
 .card {
   padding: 2em;
 }
@@ -79,7 +82,7 @@ li {list-style-type: none;}
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #FBFBFB;
+    background-color: #fff;
   }
   a:hover {
     color: #747bff;
@@ -89,8 +92,7 @@ li {list-style-type: none;}
   }
 }
 
-.ant-card-body{
+.ant-card-body {
   padding: 0;
   display: flex;
 }
-

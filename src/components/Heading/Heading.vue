@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <a-typography :style="headingStyles" v-bind="$attrs" v-on="$listeners">
     <slot></slot>
   </a-typography>
@@ -59,4 +59,4 @@ export default {
     kudos: Boolean,
   },
 };
-</script>
+</script> -->
