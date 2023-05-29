@@ -67,4 +67,3 @@ npm run build
 ```
 
 This command will create an optimized production build of your application. The build artifacts will be stored in the dist directory.
-Additional Scripts
