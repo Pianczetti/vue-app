@@ -30,7 +30,7 @@ export default {
     AddPost,
   },
   setup() {
-    const vnode = h("img", { src: "../../src/components/Icon/close.svg" });
+    const vnode = h("img", { src: "../../src/assets/img/icons/close.svg" });
     const posts = ref([...importedPosts]);
     const peopleList = ref(people);
     const activePerson = ref({});
