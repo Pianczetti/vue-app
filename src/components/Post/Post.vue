@@ -34,7 +34,7 @@
           </a-space>
         </a-col>
         <a-col class="col-3" span="3">
-          <Agreement />
+          <Agreement color="value1" />
         </a-col>
       </a-row>
 

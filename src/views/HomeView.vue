@@ -4,16 +4,15 @@
       <button class="btn w-100" @click="showModal">
         <Person />
       </button>
-      <a-modal v-model:visible="visible" title="Dodaj Post" @ok="hideModal">
+      <a-modal v-model:visible="visible" :footer="null" :closeIcon="vnode">
         <AddPost :visible="visible" @new-post="addPost" @close="hideModal" />
       </a-modal>
     </div>
     <PostList :posts="posts" :person="activePerson" />
   </div>
 </template>
-
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, h } from "vue";
 import { posts as importedPosts } from "../storage/posts.ts";
 import { people } from "../storage/people";
 import Person from "../components/Person/Person.vue";
@@ -24,12 +23,14 @@ import { useModal } from "../composables/useModal";
 
 export default {
   components: {
+    // Close,
     Agreement,
     Person,
     PostList,
     AddPost,
   },
   setup() {
+    const vnode = h("img", { src: "../../src/components/Icon/close.svg" });
     const posts = ref([...importedPosts]);
     const peopleList = ref(people);
     const activePerson = ref({});
@@ -44,6 +45,7 @@ export default {
     });
 
     return {
+      vnode,
       visible,
       posts,
       peopleList,

@@ -1,5 +1,11 @@
 <template>
-  <a-form class="custom-form" @submit="publish">
+  <a-space>
+    <Agreement color="value2" />
+    <a-typography-title :level="4">Utwórz kudos</a-typography-title>
+  </a-space>
+
+  <a-form class="custom-form" @submit="publish" :style="{ marginTop: '20px' }">
+    <a-typography>Treść posta nad kudosem</a-typography>
     <Mentionable
       placement="bottom"
       :keys="['@', '#']"
@@ -84,6 +90,7 @@ import { people } from "../storage/people.ts";
 import { Mentionable } from "vue-mention";
 import { groups } from "../storage/groups.ts";
 import Kudos from "../components/Kudos/Kudos.vue";
+import Agreement from "../components/Icon/Agreement.vue";
 import dayjs from "dayjs";
 import { ref } from "vue";
 import { usePeople } from "../composables/usePeople";
@@ -107,6 +114,7 @@ export default {
   components: {
     Mentionable,
     Kudos,
+    Agreement,
   },
 
   props: {
@@ -237,7 +245,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .select-container {
   display: flex;
   flex-direction: column;
