@@ -125,22 +125,18 @@ export default defineComponent({
     const grupy = ref([...groups]);
 
     const kudosTitle = computed(() => {
-      console.log("kudosTitle computed");
       return getKudosProperty(kudosy, props, "title");
     });
 
     const kudosImg = computed(() => {
-      console.log("kudosImg computed");
       return getKudosProperty(kudosy, props, "img");
     });
 
     const kudosGroup = computed(() => {
-      console.log("kudosGroup computed");
       return getKudosGroupProperty(grupy, props, "label");
     });
 
     const kudosGroupImg = computed(() => {
-      console.log("kudosGroupImg computed");
       return getKudosGroupProperty(grupy, props, "img");
     });
 

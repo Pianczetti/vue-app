@@ -170,7 +170,6 @@ export default {
     };
 
     const updateSelectedKudos = kudosId => {
-      console.log("kudos-id", kudosId);
       formData.value.selectedKudos = kudosId;
     };
 
@@ -196,7 +195,6 @@ export default {
       const matchingPerson = options1.value.find(
         person => person.value === name
       );
-      console.log(matchingPerson.value);
       if (matchingPerson.value) {
         newPost.value.targetPersonId = matchingPerson.id;
       }
