@@ -143,6 +143,8 @@ export default {
     },
   },
 
+  emits: ["close", "new-post"],
+
   setup(_, { emit }) {
     const currentTime = ref("");
     const { activePerson } = usePeople();
