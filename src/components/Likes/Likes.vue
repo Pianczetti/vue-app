@@ -1,7 +1,10 @@
 <template>
   <div>
     <a-tooltip title="Like">
-      <HeartOutlined :class="{ liked: liked }" @click="handleLike" />
+      <HeartFilled
+        :class="{ liked: liked, 'not-liked': !liked }"
+        @click="handleLike"
+      />
     </a-tooltip>
     <span class="like-count">{{ count }}</span>
   </div>
@@ -9,11 +12,11 @@
 
 <script>
 import { ref } from "vue";
-import { HeartOutlined } from "@ant-design/icons-vue";
+import { HeartFilled } from "@ant-design/icons-vue";
 
 export default {
   components: {
-    HeartOutlined,
+    HeartFilled,
   },
   props: {
     likes: { type: Number },
@@ -37,10 +40,16 @@ export default {
 </script>
 
 <style scoped>
-.liked {
+.not-liked {
+  color: #eeeeee;
+}
+.liked,
+.liked ~ .like-count {
   color: red;
 }
 .like-count {
   margin-left: 8px;
+  font-size: 12px;
+  color: #a8996f;
 }
 </style>

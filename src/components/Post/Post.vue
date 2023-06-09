@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted, watch } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Agreement from "../Icon/Agreement.vue";
@@ -220,8 +220,8 @@ export default defineComponent({
 }
 
 .filter-gray {
-  filter: invert(71%) sepia(12%) saturate(909%) hue-rotate(7deg) brightness(84%)
-    contrast(87%);
+  filter: brightness(0) saturate(100%) invert(64%) sepia(28%) saturate(414%)
+    hue-rotate(7deg) brightness(91%) contrast(84%);
 }
 .col-3 {
   margin-left: auto;

@@ -108,6 +108,20 @@ export default defineComponent({
   border-radius: 6px;
   transition: 0.3s all ease-in-out;
 }
+
+.kudos-description {
+  margin-left: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kudos-target-name {
+  color: #616161;
+  font-weight: 600;
+  margin-top: 8px;
+}
 .kudos {
   display: inline-block;
 }
@@ -117,15 +131,7 @@ export default defineComponent({
   height: 60px;
 }
 
-.kudos-description {
-  margin-left: 40px;
-}
-
 .kudos-title {
-  margin-top: 8px;
-}
-
-.kudos-target-name {
   margin-top: 8px;
 }
 

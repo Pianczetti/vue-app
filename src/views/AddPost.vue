@@ -5,7 +5,7 @@
   </a-space>
 
   <a-form class="custom-form" @submit="publish" :style="{ marginTop: '20px' }">
-    <a-typography>Treść posta nad kudosem</a-typography>
+    <p>Treść posta nad kudosem</p>
     <Mentionable
       placement="bottom"
       :keys="['@', '#']"
@@ -24,12 +24,18 @@
       ></a-textarea>
 
       <template #no-result>
-        <div class="dim">Użytkownik nie istnieje</div>
+        <div class="dim">Nie można użyć tagu</div>
       </template>
 
       <template #item-@="{ item }">
         <div class="user">
-          <span class="dim"> ({{ item.value }}) </span>
+          <span class="dim"> @{{ item.value }} </span>
+        </div>
+      </template>
+
+      <template #item-#="{ item }">
+        <div class="hashtag">
+          <span class="tag"> #{{ item.value }} </span>
         </div>
       </template>
     </Mentionable>
@@ -61,25 +67,28 @@
       />
     </div>
     <div class="city-container">
-      <a-select
-        v-model:value="formData.value2"
-        style="width: 120px"
-        @change="handleChange"
-      >
-        <a-select-option
-          v-for="group in options2"
-          :key="group.id"
-          :value="group.value"
+      <p>Wybierz grupę</p>
+      <div>
+        <a-select
+          v-model:value="formData.value2"
+          style="width: 180px"
+          @change="handleChange"
         >
-          <img
-            :src="group.img"
-            alt="City Icon"
-            style="width: 16px; height: 16px; margin-right: 8px"
-          />
-          {{ group.label }}
-        </a-select-option>
-      </a-select>
-      <button type="submit">Opublikuj</button>
+          <a-select-option
+            v-for="group in options2"
+            :key="group.id"
+            :value="group.value"
+          >
+            <img
+              :src="group.img"
+              alt="City Icon"
+              style="width: 16px; height: 16px; margin-right: 8px"
+            />
+            {{ group.label }}
+          </a-select-option>
+        </a-select>
+        <button type="submit">Opublikuj</button>
+      </div>
     </div>
   </a-form>
 </template>
@@ -94,6 +103,16 @@ import Agreement from "../components/Icon/Agreement.vue";
 import dayjs from "dayjs";
 import { ref } from "vue";
 import { usePeople } from "../composables/usePeople";
+import "floating-vue/dist/style.css";
+
+const hashes = [
+  {
+    value: "Brawo",
+  },
+  {
+    value: "Congratulacje",
+  },
+];
 
 const defaultPost = {
   postId: null,
@@ -188,7 +207,7 @@ export default {
     };
 
     const onOpen = key => {
-      mentionableItems.value = key === "@" ? people : issues;
+      mentionableItems.value = key === "@" ? people : hashes;
     };
 
     const onSelect = item => {
@@ -246,8 +265,65 @@ export default {
 </script>
 
 <style scoped lang="scss">
+p {
+  font-weight: 600;
+  font-size: 14px;
+  color: #616161;
+}
+.kudoses-container {
+  margin-top: 30px;
+
+  article {
+    color: #616161;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
 .select-container {
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
+}
+
+.city-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 25px;
+
+  p {
+    margin-bottom: 0;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+  }
+
+  button {
+    border: none;
+    background: #96459a;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 4px 25px;
+    margin-left: auto;
+    max-height: 32px;
+
+    &:hover {
+      background: #a8996f;
+    }
+  }
+}
+
+.user,
+.hashtag {
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background: rgb(192, 250, 153);
+  }
 }
 </style>
