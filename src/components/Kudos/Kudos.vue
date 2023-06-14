@@ -76,16 +76,9 @@ export default defineComponent({
       emit("update:selectedKudos", props.id);
     };
 
-    // const selectKudos = () => {
-    //   if (!isSelected.value) {
-    //     updateSelectedKudos();
-    //   }
-    // };
-
     return {
       isSelected,
       updateSelectedKudos,
-      // selectKudos,
     };
   },
 });

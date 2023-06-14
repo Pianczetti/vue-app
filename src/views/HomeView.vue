@@ -23,7 +23,6 @@ import { useModal } from "../composables/useModal";
 
 export default {
   components: {
-    // Close,
     Agreement,
     Person,
     PostList,

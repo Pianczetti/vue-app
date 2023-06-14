@@ -39,13 +39,6 @@ cd project-name
 npm install
 ```
 
-or
-
-```shell
-
-yarn install
-```
-
 4. Start the development server by running the following command:
 
 ```shell
@@ -55,7 +48,7 @@ npm run dev
 
 This command will build and start the project in development mode. The server will automatically reload the changes you make to the source files.
 
-Open your browser and visit http://localhost:3000 to see the running application.
+Open your browser and visit http://localhost:5173 to see the running application.
 
 ## Building for Production
 

@@ -242,8 +242,6 @@ export default {
     return {
       formData,
       kudosy,
-      value1: ref(undefined),
-      value2: ref(undefined),
       options1,
       options2,
       currentTime,
