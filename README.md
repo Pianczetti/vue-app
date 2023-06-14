@@ -10,8 +10,8 @@ This repository contains a Vue.js project built with Vite, utilizing the <a href
 
 Before running this project, make sure you have the following dependencies installed on your machine:
 
-- Node.js (v14 or higher)
-- npm (v7 or higher) or yarn (v1 or higher)
+- Node.js (my version 19.6.0)
+- npm (my version 9.4.2)
 
 ## Getting Started
 
